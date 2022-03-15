@@ -1,6 +1,8 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
+// TODO: Sprites are too large if canvas is set to original resolution. Try to find a way to scale sprites to fit the canvas.
+
 // Creates a canvas that is 100vh and 100vw
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -113,8 +115,90 @@ class Projectile {
 //   }
 // }
 
+class Invader {
+  constructor({ position }) {
+    this.velocity = {
+      x: 0,
+      y: 0,
+    };
+
+    const image = new Image();
+    image.src = "./sprites/Invader_01-1.png";
+    image.onload = () => {
+      const invaderScale = 1;
+      this.image = image;
+      this.width = image.width * invaderScale;
+      this.height = image.height * invaderScale;
+      this.position = {
+        x: position.x,
+        y: position.y,
+      };
+    };
+  }
+
+  draw() {
+    if (this.image)
+      c.drawImage(
+        this.image,
+        this.position.x,
+        this.position.y,
+        this.width,
+        this.height
+      );
+  }
+
+  update({ velocity }) {
+    if (this.image) {
+      this.draw();
+      this.position.x += velocity.x;
+      this.position.y += velocity.y;
+    }
+  }
+}
+
+class Grid {
+  constructor() {
+    this.position = {
+      x: 0,
+      y: 0,
+    };
+
+    this.velocity = {
+      x: 3,
+      y: 0,
+    };
+
+    this.invaders = [];
+
+    const columns = 11;
+    const rows = 5;
+
+    this.width = columns * 30;
+
+    for (let x = 0; x < columns; x++) {
+      for (let y = 0; y < rows; y++) {
+        this.invaders.push(new Invader({ position: { x: x * 30, y: y * 30 } }));
+      }
+    }
+  }
+
+  update() {
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+
+    this.velocity.y = 0;
+
+    if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
+      this.velocity.x = -this.velocity.x;
+      this.velocity.y = 30;
+    }
+  }
+}
+
 const player = new Player();
 const projectiles = [];
+const grids = [new Grid()];
+
 const keys = {
   a: {
     pressed: false,
@@ -147,6 +231,13 @@ function animate() {
     } else {
       projectile.update();
     }
+  });
+
+  grids.forEach((grid) => {
+    grid.update();
+    grid.invaders.forEach((invader) => {
+      invader.update({ velocity: grid.velocity });
+    });
   });
 
   const playerSpeed = 7;
