@@ -1,9 +1,12 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
+// Creates a canvas that is 100vh and 100vw
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+// Creates a canvas at original screen dimensions * integer scale
+// ? Set a global scale variable to scale the canvas and all objects
 // const screenScale = 2;
 // canvas.width = 224;
 // canvas.height = 256;
@@ -46,6 +49,7 @@ class Player {
     if (this.image) {
       this.draw();
       this.position.x += this.velocity.x;
+      // console.log({ x: this.position.x });
     }
   }
 }
@@ -70,19 +74,26 @@ const keys = {
 };
 
 function animate() {
-  const playerSpeed = 7;
   requestAnimationFrame(animate);
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
 
-  if ((keys.a.pressed || keys.ArrowLeft.pressed) && player.position.x >= 0) {
+  const playerSpeed = 7;
+
+  // ! playerSpeed must be included in the calculations to keep the player from moving off screen
+  if (
+    (keys.a.pressed || keys.ArrowLeft.pressed) &&
+    player.position.x > playerSpeed
+  ) {
     player.velocity.x = -playerSpeed;
+    console.log({ x: player.position.x });
   } else if (
     (keys.d.pressed || keys.ArrowRight.pressed) &&
-    player.position.x + player.width <= canvas.width
+    player.position.x < canvas.width - player.width - playerSpeed
   ) {
     player.velocity.x = playerSpeed;
+    console.log({ x: player.position.x });
   } else {
     player.velocity.x = 0;
   }
