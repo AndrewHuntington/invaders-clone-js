@@ -53,23 +53,32 @@ class Player {
   }
 }
 
-// Projectile class from tutorial
-// Draws a circular projectile on to the canvas rather than use a sprite
-// TODO: Have it spawn sprite instead
+// This projectile class uses the Laser.png sprite
 class Projectile {
   constructor({ position, velocity }) {
     this.position = position;
     this.velocity = velocity;
 
-    this.radius = 3;
+    const image = new Image();
+    image.src = "./sprites/Laser.png";
+    image.onload = () => {
+      const projectileScale = 1;
+      this.image = image;
+      this.width = image.width * projectileScale;
+      this.height = image.height * projectileScale;
+    };
   }
 
   draw() {
-    c.beginPath();
-    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
-    c.fillStyle = "red";
-    c.fill();
-    c.closePath();
+    if (this.image) {
+      c.drawImage(
+        this.image,
+        this.position.x,
+        this.position.y,
+        this.width,
+        this.height
+      );
+    }
   }
 
   update() {
@@ -78,6 +87,31 @@ class Projectile {
     this.position.y += this.velocity.y;
   }
 }
+
+// Projectile class from tutorial
+// Draws a circular projectile on to the canvas rather than use a sprite
+// class Projectile {
+//   constructor({ position, velocity }) {
+//     this.position = position;
+//     this.velocity = velocity;
+
+//     this.radius = 3;
+//   }
+
+//   draw() {
+//     c.beginPath();
+//     c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
+//     c.fillStyle = "red";
+//     c.fill();
+//     c.closePath();
+//   }
+
+//   update() {
+//     this.draw();
+//     this.position.x += this.velocity.x;
+//     this.position.y += this.velocity.y;
+//   }
+// }
 
 const player = new Player();
 const projectiles = [];
@@ -105,7 +139,7 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
   projectiles.forEach((projectile, index) => {
-    if (projectile.position.y + projectile.radius <= 0) {
+    if (projectile.position.y + projectile.height <= 0) {
       // prevents projectiles from flashing on screen
       setTimeout(() => {
         projectiles.splice(index, 1);
