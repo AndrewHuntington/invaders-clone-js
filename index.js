@@ -240,12 +240,12 @@ function animate() {
 
       projectiles.forEach((projectile, j) => {
         if (
-          projectile.position.y - projectile.height <=
+          projectile.position.y - projectile.height / 2 <=
             invader.position.y + invader.height &&
-          projectile.position.x + projectile.width >= invader.position.x &&
-          projectile.position.x - projectile.width <=
+          projectile.position.x + projectile.width / 2 >= invader.position.x &&
+          projectile.position.x - projectile.width / 2 <=
             invader.position.x + invader.width &&
-          projectile.position.y + projectile.height >= invader.position.y
+          projectile.position.y + projectile.height / 2 >= invader.position.y
         ) {
           setTimeout(() => {
             const invaderFound = grid.invaders.find((invader2) => {
