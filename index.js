@@ -164,7 +164,7 @@ class Grid {
     };
 
     this.velocity = {
-      x: 3,
+      x: 0.25,
       y: 0,
     };
 
@@ -173,11 +173,11 @@ class Grid {
     const columns = 11;
     const rows = 5;
 
-    this.width = columns * 30;
+    this.width = columns * 32;
 
     for (let x = 0; x < columns; x++) {
       for (let y = 0; y < rows; y++) {
-        this.invaders.push(new Invader({ position: { x: x * 30, y: y * 30 } }));
+        this.invaders.push(new Invader({ position: { x: x * 32, y: y * 32 } }));
       }
     }
   }
@@ -235,8 +235,34 @@ function animate() {
 
   grids.forEach((grid) => {
     grid.update();
-    grid.invaders.forEach((invader) => {
+    grid.invaders.forEach((invader, i) => {
       invader.update({ velocity: grid.velocity });
+
+      projectiles.forEach((projectile, j) => {
+        if (
+          projectile.position.y - projectile.height <=
+            invader.position.y + invader.height &&
+          projectile.position.x + projectile.width >= invader.position.x &&
+          projectile.position.x - projectile.width <=
+            invader.position.x + invader.width &&
+          projectile.position.y + projectile.height >= invader.position.y
+        ) {
+          setTimeout(() => {
+            const invaderFound = grid.invaders.find((invader2) => {
+              return invader2 === invader;
+            });
+
+            const projectileFound = projectiles.find((projectile2) => {
+              return projectile2 === projectile;
+            });
+
+            if (invaderFound && projectileFound) {
+              grid.invaders.splice(i, 1);
+              projectiles.splice(j, 1);
+            }
+          }, 0);
+        }
+      });
     });
   });
 
