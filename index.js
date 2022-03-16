@@ -90,6 +90,40 @@ class Projectile {
   }
 }
 
+class InvaderProjectile {
+  constructor({ position, velocity }) {
+    this.position = position;
+    this.velocity = velocity;
+
+    const image = new Image();
+    image.src = "./sprites/Missile.png";
+    image.onload = () => {
+      const projectileScale = 1;
+      this.image = image;
+      this.width = image.width * projectileScale;
+      this.height = image.height * projectileScale;
+    };
+  }
+
+  draw() {
+    if (this.image) {
+      c.drawImage(
+        this.image,
+        this.position.x,
+        this.position.y,
+        this.width,
+        this.height
+      );
+    }
+  }
+
+  update() {
+    this.draw();
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+  }
+}
+
 // Projectile class from tutorial
 // Draws a circular projectile on to the canvas rather than use a sprite
 // class Projectile {
@@ -154,6 +188,23 @@ class Invader {
       this.position.y += velocity.y;
     }
   }
+
+  shoot(invaderProjectiles) {
+    if (this.position) {
+      invaderProjectiles.push(
+        new InvaderProjectile({
+          position: {
+            x: this.position.x + this.width / 2,
+            y: this.position.y + this.height,
+          },
+          velocity: {
+            x: 0,
+            y: 5,
+          },
+        })
+      );
+    }
+  }
 }
 
 class Grid {
@@ -164,7 +215,7 @@ class Grid {
     };
 
     this.velocity = {
-      x: 0.25,
+      x: 0.15,
       y: 0,
     };
 
@@ -198,6 +249,7 @@ class Grid {
 const player = new Player();
 const projectiles = [];
 const grids = [new Grid()];
+const invaderProjectiles = [];
 
 const keys = {
   a: {
@@ -217,11 +269,37 @@ const keys = {
   },
 };
 
+let frames = 0;
 function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
+
+  invaderProjectiles.forEach((invaderProjectile, index) => {
+    if (
+      invaderProjectile.position.y + invaderProjectile.height >=
+      canvas.height
+    ) {
+      setTimeout(() => {
+        invaderProjectiles.splice(index, 1);
+      }, 0);
+    } else {
+      invaderProjectile.update();
+    }
+
+    // calculate if enemy missile hits player
+    if (
+      invaderProjectile.position.y + invaderProjectile.height >=
+        player.position.y &&
+      invaderProjectile.position.x + invaderProjectile.width >=
+        player.position.x &&
+      invaderProjectile.position.x <= player.position.x + player.width
+    ) {
+      console.log("you lose");
+    }
+  });
+
   projectiles.forEach((projectile, index) => {
     if (projectile.position.y + projectile.height <= 0) {
       // prevents projectiles from flashing on screen
@@ -233,8 +311,15 @@ function animate() {
     }
   });
 
-  grids.forEach((grid) => {
+  grids.forEach((grid, gridIndex) => {
     grid.update();
+    // spawn projectiles
+    if (frames % 100 === 0 && grid.invaders.length > 0) {
+      grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(
+        invaderProjectiles
+      );
+    }
+
     grid.invaders.forEach((invader, i) => {
       invader.update({ velocity: grid.velocity });
 
@@ -256,9 +341,25 @@ function animate() {
               return projectile2 === projectile;
             });
 
+            // remove invader and projectile
             if (invaderFound && projectileFound) {
               grid.invaders.splice(i, 1);
               projectiles.splice(j, 1);
+
+              // resize grid if a column is empty
+              if (grid.invaders.length > 0) {
+                const firstInvader = grid.invaders[0];
+                const lastInvader = grid.invaders[grid.invaders.length - 1];
+
+                grid.width =
+                  lastInvader.position.x -
+                  firstInvader.position.x +
+                  lastInvader.width;
+                grid.position.x = firstInvader.position.x;
+              } else {
+                // remove grid if all invaders are destroyed
+                grid.splice(gridIndex, 1);
+              }
             }
           }, 0);
         }
@@ -282,6 +383,8 @@ function animate() {
   } else {
     player.velocity.x = 0;
   }
+
+  frames++;
 }
 
 animate();
