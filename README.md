@@ -4,6 +4,10 @@ A clone of the classic Space Invaders game written in JavaScipt.
 
 The most basic of features have been implemented, however there is a lot to do to make it closer to the original.
 
+## How To Play
+
+Use the arrow keys or A and D keys to move the ship left or right and the space bar or the right mouse button to fire.
+
 ## TODO:
 
 - Organize code into different files
