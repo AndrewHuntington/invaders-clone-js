@@ -19,6 +19,12 @@ body {
   font-size: 14px;
 }
 
+header {
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
 .score-area {
   /* position: fixed; */
   display: flex;
