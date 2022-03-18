@@ -20,6 +20,8 @@ class Player {
       y: 0,
     };
 
+    this.opacity = 1;
+
     const image = new Image();
     image.src = "./sprites/Player.png";
     image.onload = () => {
@@ -37,6 +39,9 @@ class Player {
   draw() {
     // c.fillStyle = "red";
     // c.fillRect(this.position.x, this.position.y, this.width, this.height);
+
+    c.save();
+    c.globalAlpha = this.opacity;
     if (this.image)
       c.drawImage(
         this.image,
@@ -45,6 +50,7 @@ class Player {
         this.width,
         this.height
       );
+    c.restore();
   }
 
   update() {
@@ -301,6 +307,10 @@ const keys = {
 };
 
 let frames = 0;
+let game = {
+  over: false,
+  active: true,
+};
 
 // // create particles to use as stars in the background
 // for (let i = 0; i < 100; i++) {
@@ -342,6 +352,8 @@ function createParticles({ object, color, fades }) {
 }
 
 function animate() {
+  if (!game.active) return;
+
   requestAnimationFrame(animate);
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
@@ -387,7 +399,15 @@ function animate() {
     ) {
       setTimeout(() => {
         invaderProjectiles.splice(index, 1);
+        player.opacity = 0;
+        game.over = true;
       }, 0);
+
+      // stop game 2 seconds after player is hit
+      setTimeout(() => {
+        game.active = false;
+      }, 2000);
+
       console.log("you lose");
       createParticles({
         object: player,
@@ -492,6 +512,8 @@ function animate() {
 animate();
 
 addEventListener("keydown", ({ key }) => {
+  if (game.over) return;
+
   switch (key) {
     case "a":
     case "ArrowLeft":
@@ -535,6 +557,8 @@ addEventListener("keyup", ({ key }) => {
 });
 
 addEventListener("mousedown", ({ button }) => {
+  if (game.over) return;
+
   if (button === 0) {
     projectiles.push(
       new Projectile({
