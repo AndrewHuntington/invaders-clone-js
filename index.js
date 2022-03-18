@@ -4,15 +4,15 @@ const c = canvas.getContext("2d");
 
 // TODO: Sprites are too large if canvas is set to original resolution. Try to find a way to scale sprites to fit the canvas.
 
-// Creates a canvas that is 100vh and 100vw
-canvas.width = innerWidth;
-canvas.height = innerHeight - 35; // 35 is the canvas margin-top in css
+// // Creates a canvas that is 100vh and 100vw
+// canvas.width = innerWidth;
+// canvas.height = innerHeight - 35; // 35 is the canvas margin-top in css
 
 // Creates a canvas at original screen dimensions * integer scale
 // ? Set a global scale variable to scale the canvas and all objects
-// const screenScale = 2;
-// canvas.width = 224;
-// canvas.height = 256;
+const screenScale = 2;
+canvas.width = 224 * screenScale;
+canvas.height = 256 * screenScale;
 
 class Player {
   constructor() {
