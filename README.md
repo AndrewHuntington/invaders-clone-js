@@ -6,7 +6,7 @@ The most basic of features have been implemented, however there is a lot to do t
 
 ## How To Play
 
-Use the arrow keys or A and D keys to move the ship left or right and the space bar or the right mouse button to fire.
+Use the arrow keys or A and D keys to move the ship left or right and the space bar or the left mouse button to fire.
 
 ## TODO:
 
