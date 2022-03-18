@@ -1,4 +1,4 @@
-const scoreEl = document.querySelector("#scoreEl");
+const scoreEl = document.querySelector("#score-number");
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
