@@ -1,3 +1,4 @@
+const scoreEl = document.querySelector("#scoreEl");
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
@@ -5,7 +6,7 @@ const c = canvas.getContext("2d");
 
 // Creates a canvas that is 100vh and 100vw
 canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.height = innerHeight - 35; // 35 is the canvas margin-top in css
 
 // Creates a canvas at original screen dimensions * integer scale
 // ? Set a global scale variable to scale the canvas and all objects
@@ -311,6 +312,7 @@ let game = {
   over: false,
   active: true,
 };
+let score = 0;
 
 // // create particles to use as stars in the background
 // for (let i = 0; i < 100; i++) {
@@ -363,7 +365,7 @@ function animate() {
     // // reposition the stars at the top of the canvas when they reach the bottom
     // // creates a looping effect for the background
     // if (particle.position.y - particle.radius >= canvas.height) {
-    //   particle.positionx = Math.random() * canvas.width;
+    //   particle.position.x = Math.random() * canvas.width;
     //   particle.position.y = -particle.radius;
     // }
 
@@ -458,8 +460,11 @@ function animate() {
               return projectile2 === projectile;
             });
 
-            // remove invader and projectile
+            // remove invader and projectile + add score
             if (invaderFound && projectileFound) {
+              // TODO: change score values for different invader types
+              score += 100;
+              scoreEl.innerHTML = score;
               createParticles({
                 object: invader,
                 fades: true,

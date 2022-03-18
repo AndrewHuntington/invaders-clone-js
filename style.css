@@ -10,4 +10,19 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-color: black;
+}
+
+.score-area {
+  position: fixed;
+  z-index: 10;
+  color: white;
+  left: 10px;
+  top: 10px;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+canvas {
+  margin-top: 35px;
 }
